@@ -1,0 +1,33 @@
+extends base.jade
+
+block title
+	title Miniscope - Directory listing of #{Path}
+	style
+		.thead {
+			background-color:#C5D5A9;
+			font-weight:bold;
+		}
+
+		table tr:nth-child(even) td{
+			background-color: #e8e8f0;
+		}
+
+
+block content
+	a(href="..") Up to higher level directory
+	table#dirlist(cellspacing="0", border="0")
+		thead
+			tr.thead
+				th
+					tt Name
+				th
+					tt Date
+				th
+					tt Size
+		tbody
+			each $file, $data in Files
+				tr(align="right")
+					td(align="left")
+						a(href=$data.url) #{$file}
+					td #{$data.date}
+					td: tt #{$data.size}

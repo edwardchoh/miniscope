@@ -1,0 +1,57 @@
+extends base.jade
+
+block title
+	title Miniscope - Results for #{Query}
+	style
+		#results {margin-top:.5em;}
+		#results .con{font-size:small;color:#000;}
+		#more .l, #results .l { color:#666; }
+		#results .m {background-color:#ffb;}
+		#results i {color: green; font-weight:bold;}
+		#results tr.dir td {
+			// background:transparent url(img/heading-green.png) repeat-x scroll 0 bottom;
+			background:#92E285;
+			border-bottom:1px solid #92E285;
+			font-weight: 600;
+		}
+		#results td.f{width:3em;padding-left:2em;padding-right:.5em;}
+
+		#more { line-height:1.25em;}
+		#more b { background-color:#ffff99;}
+
+		#results a							{color:#1C99E0;text-decoration:none;}
+		#results a:visited					{color:#023f62;text-decoration:none;}
+		#results a:active, #results a:hover	{color:#0369a3;text-decoration:underline;}
+
+		#results tr.dir a							{color:#18A303;text-decoration:none;}
+		#results tr.dir a:visited					{color:#106802;text-decoration:none;}
+		#results tr.dir a:active, #results a:hover	{color:#18A303;text-decoration:underline;}
+
+		a.s {color:#000;} /* matched lines */
+
+		table tr:nth-child(odd) td{
+			background-color: #e8e8f0;
+		}
+
+block content
+	if Results
+		div#results
+			table
+				tbody
+					each $dir, $dirres in Results
+						tr.dir
+							td(colspan="2")
+								a(href="/" + $dir) #{$dir}/
+						each $file, $results in $dirres
+							tr
+								td.f
+									a(href="/" + $dir + "/" + $file) #{$file}
+								td
+									tt.con
+										each $i, $result in $results
+											a.s(href="/" + $result.File + "#" + $result.Line)
+												span.l #{$result.Line} 
+												b #{$result.Text}
+											br
+	else
+		p No results found.

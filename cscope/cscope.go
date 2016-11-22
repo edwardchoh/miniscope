@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path"
 	"strconv"
 	"strings"
 )
@@ -16,12 +17,15 @@ const (
 	FuncsCalledBy
 	FuncsCalling
 	TextString
+	ChangeText
 	EgrepPattern
+	FindFile
 	FilesInclude
 )
 
 type Cscope struct {
-	bin, out string
+	binPath, cscopeOutPath string
+	SourcePath             string
 }
 
 type CscopeResult struct {
@@ -31,7 +35,21 @@ type CscopeResult struct {
 	Text         string
 }
 
-func NewCscope(cscopeBinPath, cscopeOutPath string) (c *Cscope, err error) {
+var (
+	CscopeKind = map[string]int{
+		"csymbol":       CSymbol,
+		"funcdefintion": FuncDefintion,
+		"funcscalledby": FuncsCalledBy,
+		"funcscalling":  FuncsCalling,
+		"textstring":    TextString,
+		"changetext":    ChangeText,
+		"egreppattern":  EgrepPattern,
+		"findfile":      FindFile,
+		"filesinclude":  FilesInclude,
+	}
+)
+
+func NewCscope(cscopeBinPath, sourcePath string) (c *Cscope, err error) {
 	var bin, out *os.File
 
 	if bin, err = os.Open(cscopeBinPath); err != nil {
@@ -43,13 +61,14 @@ func NewCscope(cscopeBinPath, cscopeOutPath string) (c *Cscope, err error) {
 
 	defer bin.Close()
 
+	cscopeOutPath := path.Join(sourcePath, "cscope.out")
 	if out, err = os.Open(cscopeOutPath); err != nil {
 		return
 	}
 
 	defer out.Close()
 
-	c = &Cscope{cscopeBinPath, cscopeOutPath}
+	c = &Cscope{cscopeBinPath, cscopeOutPath, sourcePath}
 	return
 }
 
@@ -57,8 +76,8 @@ func (c *Cscope) Search(s string, kind int) (results []*CscopeResult, err error)
 	var stdout []byte
 	var n int
 
-	search := fmt.Sprintf("-%d%s", kind, s)
-	cmd := exec.Command(c.bin, "-dL", "-f", c.out, search)
+	k := fmt.Sprintf("-%d", kind)
+	cmd := exec.Command(c.binPath, "-dL", "-f", c.cscopeOutPath, k, s)
 
 	if stdout, err = cmd.Output(); err != nil {
 		return
@@ -73,7 +92,11 @@ func (c *Cscope) Search(s string, kind int) (results []*CscopeResult, err error)
 			err = fmt.Errorf("Incorrect cscope result format")
 		}
 
-		n, err = strconv.Atoi(strings.Trim(s[2], " "))
+		for i, ss := range s {
+			s[i] = strings.Trim(ss, " ")
+		}
+
+		n, err = strconv.Atoi(s[2])
 		if err != nil {
 			return nil, err
 		}

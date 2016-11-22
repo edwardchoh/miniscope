@@ -3,7 +3,7 @@ package cscope
 import "testing"
 
 func TestCscope(t *testing.T) {
-	_, err := NewCscope("cscope", "fixtures/project/cscope.out")
+	_, err := NewCscope("cscope", "../fixtures")
 	if err != nil {
 		t.Error(err)
 	}
@@ -20,12 +20,12 @@ func TestCscope(t *testing.T) {
 }
 
 func TestSearch(t *testing.T) {
-	cs, err := NewCscope("cscope", "fixtures/project/cscope.out")
+	cs, err := NewCscope("cscope", "../fixtures")
 	if err != nil {
 		t.Error(err)
 	}
 
-	res, err := cs.Search("MOSQ_ERR_CONN_PENDING", CSymbol)
+	res, err := cs.Search("listNode", CSymbol)
 	if err != nil {
 		t.Error(err)
 	}
