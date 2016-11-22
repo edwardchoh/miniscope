@@ -1,6 +1,9 @@
-# miniscope
+# ![miniscope](./assets/miniscope.png)
 
-miniscope is a code browser, powered by cscope and Golang. This is inspired by code search and cross reference engine like OpenGrok.
+[![Go Report Card](https://goreportcard.com/report/github.com/edwardchoh/miniscope/)](https://goreportcard.com/report/github.com/edwardchoh/miniscope/)
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/edwardchoh/miniscope/blob/master/LICENSE)
+
+miniscope is a code explorer, powered by cscope and Golang. This is inspired by code search and cross reference engine like OpenGrok.
 
 It comes as a single, batteries-included, static binary. No need to install OpenGrok, all you need is to index your code with cscope beforehand.
 
@@ -11,6 +14,14 @@ It comes as a single, batteries-included, static binary. No need to install Open
 - Easy to use and install
 - No dependencies or external files needed -- apart from the single binary
 - Uses your existing cscope database
+
+This is a screenshot of query results, all cscope query types are supported.
+
+![Results screenshot](./images/results.png)
+
+Another screenshot of viewing a file, syntax highlighting is enabled for common file types.
+
+![View screenshot](./images/fileview.png)
 
 ## Installation
 
@@ -52,5 +63,5 @@ GOOS=freebsd GOARCH=amd64 go build -o miniscope-freebsd-amd64 -x cmd/miniscope/m
 ## Licenses
 
 This project embeds resources from:
-	* [highlight.js](https://github.com/isagalaev/highlight.js)
-	* [highlightjs-line-numbers](https://github.com/wcoder/highlightjs-line-numbers.js)
+* [highlight.js](https://github.com/isagalaev/highlight.js)
+* [highlightjs-line-numbers](https://github.com/wcoder/highlightjs-line-numbers.js)
