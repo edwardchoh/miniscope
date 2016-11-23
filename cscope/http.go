@@ -23,7 +23,7 @@ type HttpServer struct {
 	cscope       *Cscope
 	assetsPath   string
 	templates    map[string]*template.Template
-	UseLiveFiles bool
+	useLiveFiles bool
 }
 
 // type AssetLoader func(string) ([]byte, error)
@@ -54,15 +54,15 @@ func NewHttpServer(listenAddr, pathToCscopeOut, assetsPath string) (h *HttpServe
 		return
 	}
 
-	h = &HttpServer{s, cs, assetsPath, templates, false}
+	h = &HttpServer{s, cs, assetsPath, templates, assetsPath != ""}
 	s.Handler = h
 
 	return
 }
 
 func (h *HttpServer) getTemplate(template string) *template.Template {
-	if h.UseLiveFiles {
-		tpl, err := jade.CompileFile(path.Join(h.assetsPath, template+".jade"), jade.Options{})
+	if h.useLiveFiles {
+		tpl, err := jade.CompileFile(h.getResourcePath(template+".jade"), jade.Options{})
 		if err != nil {
 			panic(err)
 		}
@@ -72,14 +72,18 @@ func (h *HttpServer) getTemplate(template string) *template.Template {
 	}
 }
 
+func (h *HttpServer) getResourcePath(filename string) string {
+	return path.Join(h.assetsPath, filename)
+}
+
 func (h *HttpServer) ServeAsset(w http.ResponseWriter, req *http.Request) {
 	var buf []byte
 	var err error
 
 	file := req.URL.Query()["file"][0]
 
-	if h.UseLiveFiles {
-		buf, err = ioutil.ReadFile(file)
+	if h.useLiveFiles {
+		buf, err = ioutil.ReadFile(h.getResourcePath(file))
 	} else {
 		// serve file from assets
 		buf, err = Asset(file)
@@ -95,7 +99,7 @@ func (h *HttpServer) ServeAsset(w http.ResponseWriter, req *http.Request) {
 			ext = ext[1:]
 		}
 		w.Header().Set("Content-Type", "text/"+ext)
-		if !h.UseLiveFiles {
+		if !h.useLiveFiles {
 			w.Header().Set("Cache-Control", "max-age=120")
 		}
 		w.Write(buf)
