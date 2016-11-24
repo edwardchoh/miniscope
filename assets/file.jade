@@ -48,8 +48,12 @@ block content
 				delay: 500,
 				autoHide: true,
 				items: {
-					search: {name: 'Search for symbols', callback: function(key, opt) {
+					search: {name: 'Search for symbol', callback: function(key, opt) {
 						$('form#searchform').submit();
+					}},
+					searchnew: {name: 'Search for symbol in new tab', callback: function(key, opt) {
+						var url = '/?' + $('form#searchform').serialize();
+						window.open(url);
 					}},
 				}
 			});
