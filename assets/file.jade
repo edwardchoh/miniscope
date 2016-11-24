@@ -31,8 +31,36 @@ block content
 	pre: code
 		#{Content}
 	link(rel="stylesheet", href="/?file=default.min.css")
+	link(rel="stylesheet", href="/?file=jquery.contextMenu.min.css")
 	script(src="/?file=highlight.min.js")
 	script(src="/?file=highlightjs-line-numbers.js")
+	script(src="/?file=jquery-3.1.1.min.js")
+	script(src="/?file=jquery.get-word-by-event.js")
+	script(src="/?file=jquery.contextMenu.min.js")
 	script
 		hljs.initHighlightingOnLoad();
 		hljs.initLineNumbersOnLoad();
+
+		// enable word under cursor
+		$(document).ready(function(){
+			var contextMenu = $.contextMenu({
+				selector: 'code >, code',
+				delay: 500,
+				autoHide: true,
+				items: {
+					search: {name: 'Search for symbols', callback: function(key, opt) {
+						$('form#searchform').submit();
+					}},
+				}
+			});
+
+			function wordEventHandler(e, word) {
+				var m = word.match(/[\w\._\/\\]+/);
+				if (m != null) word = m[0];
+				word = word.trim()
+				$('#search').val(word);
+			}
+
+			$('code >, code').getWordByEvent('click', wordEventHandler);
+			$('code >, code').getWordByEvent('contextmenu', wordEventHandler);
+		});

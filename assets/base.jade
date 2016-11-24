@@ -21,7 +21,7 @@ html
 		block header
 		block common
 			#bar
-				form(action="/")
+				form#searchform(action="/")
 					input#search(type="text", name="search", placeholder="Enter text to search")
 					select#kind(name="kind")
 						option(value="csymbol", selected) Find this C Symbol

@@ -65,3 +65,6 @@ GOOS=freebsd GOARCH=amd64 go build -o miniscope-freebsd-amd64 -x cmd/miniscope/m
 This project embeds resources from:
 * [highlight.js](https://github.com/isagalaev/highlight.js)
 * [highlightjs-line-numbers](https://github.com/wcoder/highlightjs-line-numbers.js)
+* [GetWorkByEvent jQuery plugin](https://github.com/megahertz/jquery.get-word-by-event)
+* [jQuery](https://jquery.com)
+* [jQuery-contetMenu](https://github.com/swisnl/jQuery-contextMenu)
