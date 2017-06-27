@@ -5,7 +5,7 @@
 
 miniscope is a code explorer, powered by cscope and Golang. This is inspired by code search and cross reference engine like OpenGrok.
 
-It comes as a single, batteries-included, static binary. No need to install OpenGrok, all you need is to index your code with cscope beforehand.
+It comes as a single, batteries-included, static binary. No need to install OpenGrok, all you need is to install cscope beforehand.
 
 ## Features
 
@@ -14,6 +14,7 @@ It comes as a single, batteries-included, static binary. No need to install Open
 - Easy to use and install
 - No dependencies or external files needed -- apart from the single binary
 - Uses your existing cscope database
+- Automatically creates cscope index if not found
 
 This is a screenshot of query results, all cscope query types are supported.
 
@@ -27,7 +28,7 @@ Another screenshot of viewing a file, syntax highlighting is enabled for common 
 
 ### Prebuilt binaries
 
-Not available yet.
+[Available for Linux, Windows, FreeBSD, Darwin (x86_64)](https://github.com/edwardchoh/miniscope/releases)
 
 ## Usage
 

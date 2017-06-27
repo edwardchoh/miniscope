@@ -7,8 +7,11 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/go-playground/log"
 )
 
 const (
@@ -49,6 +52,47 @@ var (
 	}
 )
 
+func buildCscope(cscopeBinPath, sourcePath string) (out *os.File, err error) {
+	log.Info("cscope.files not found, attempting to list C/C++/Java files")
+
+	// check or build for cscope.files
+	cscopeFilesPath := path.Join(sourcePath, "cscope.files")
+	if _, err = os.Stat(cscopeFilesPath); os.IsNotExist(err) {
+		var f *os.File
+		if f, err = os.Create(cscopeFilesPath); err != nil {
+			return
+		}
+
+		// write all files with matching extensions into cscope.files
+		err = filepath.Walk(sourcePath, func(path string, fi os.FileInfo, err error) error {
+			if err != nil {
+				return err
+			}
+
+			switch filepath.Ext(path) {
+			case ".cpp", ".cc", ".cxx", ".m", ".hpp", ".hh", ".hxx", ".c", ".h", ".java", ".properties", ".go":
+				_, err = f.WriteString(path + "\n")
+			default:
+				err = nil
+			}
+			return err
+		})
+
+		f.Close()
+	}
+
+	log.Info("cscope.out not found, attempting to build index")
+	// build the index
+	cscopeOutPath := path.Join(sourcePath, "cscope.out")
+	cmd := exec.Command(cscopeBinPath, "-b", "-f", cscopeOutPath)
+	if _, err = cmd.Output(); err != nil {
+		return
+	}
+
+	out, err = os.Open(cscopeOutPath)
+	return
+}
+
 func NewCscope(cscopeBinPath, sourcePath string) (c *Cscope, err error) {
 	var bin, out *os.File
 
@@ -63,7 +107,9 @@ func NewCscope(cscopeBinPath, sourcePath string) (c *Cscope, err error) {
 
 	cscopeOutPath := path.Join(sourcePath, "cscope.out")
 	if out, err = os.Open(cscopeOutPath); err != nil {
-		return
+		if out, err = buildCscope(cscopeBinPath, sourcePath); err != nil {
+			return
+		}
 	}
 
 	defer out.Close()
