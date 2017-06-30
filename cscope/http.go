@@ -12,6 +12,7 @@ import (
 
 	"html/template"
 	"net/http"
+	"path/filepath"
 
 	"github.com/edwardchoh/jade"
 	"github.com/go-playground/log"
@@ -171,8 +172,13 @@ func (h *HttpServer) ServeQuery(w http.ResponseWriter, req *http.Request) {
 				p := path.Base(v.File)
 
 				if len(k) > 0 && k[0] == '/' {
-					// ignore results outside of the cscope root
-					continue
+					var rel string
+					if rel, err = filepath.Rel(h.cscope.SourcePath, k); err != nil {
+						// ignore results outside of the cscope root
+						continue
+					}
+					k = rel
+					v.File = path.Join(k, p)
 				}
 
 				f, ok := r[k]
